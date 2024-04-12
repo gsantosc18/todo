@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"encoding/json"
@@ -6,13 +6,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gsantosc18/todo/internal/todo/domain"
-	"github.com/gsantosc18/todo/internal/todo/repository"
 	"github.com/gsantosc18/todo/internal/todo/service"
 )
 
+var todoService service.TodoService = *service.NewTodoService()
+
 func ListTodoHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(service.ListTodo())
+	json.NewEncoder(w).Encode(todoService.ListTodo())
 }
 
 func CreateTodoHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +27,7 @@ func CreateTodoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	insertedTodo, insertErr := repository.InserTodo(&todo)
+	insertedTodo, insertErr := todoService.InserTodo(&todo)
 
 	if insertErr != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -52,7 +53,7 @@ func UpdateTodoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updatedTodo, updateErr := service.UpdateTodo(id, &todo)
+	updatedTodo, updateErr := todoService.UpdateTodo(id, &todo)
 
 	if updateErr != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -68,7 +69,7 @@ func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
 
-	err := service.DeleteTodo(id)
+	err := todoService.DeleteTodo(id)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

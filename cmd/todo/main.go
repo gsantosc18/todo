@@ -4,7 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gsantosc18/todo/cmd/todo/router"
+	_ "github.com/gsantosc18/todo/config/log"
+	"github.com/gsantosc18/todo/internal/todo/router"
 )
 
 func main() {
