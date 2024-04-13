@@ -4,7 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/google/uuid"
-	"github.com/gsantosc18/todo/config/database"
+	"github.com/gsantosc18/todo/internal/todo/config/database"
 	"github.com/gsantosc18/todo/internal/todo/domain"
 )
 

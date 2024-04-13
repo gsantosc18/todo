@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/gsantosc18/todo/config/log"
+	_ "github.com/gsantosc18/todo/internal/todo/config/log"
 	"github.com/gsantosc18/todo/internal/todo/router"
 )
 
