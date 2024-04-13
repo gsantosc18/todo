@@ -11,3 +11,7 @@ type Response struct {
 	Message string `json:"message"`
 	Error   string `json:"error"`
 }
+
+func (Todo) TableName() string {
+	return "todo"
+}

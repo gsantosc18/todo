@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"log/slog"
@@ -9,36 +8,42 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func GetConnect() *sql.DB {
+type db struct {
+	Host     string
+	User     string
+	Password string
+	Dbname   string
+}
+
+func getDbInfo() *db {
+	return &db{
+		Host:     os.Getenv("DB_HOST"),
+		User:     os.Getenv("DB_USER"),
+		Password: os.Getenv("DB_PASSWORD"),
+		Dbname:   os.Getenv("DB_NAME"),
+	}
+}
+
+func GetConnect() *gorm.DB {
 	err := godotenv.Load()
 
 	if err != nil {
 		log.Printf("Houve um erro ao carregar as variáveis de ambiente, erro=%s", err.Error())
 	}
 
-	username := os.Getenv("DB_USER")
-	dbname := os.Getenv("DB_NAME")
-	password := os.Getenv("DB_PASSWORD")
+	dbInfo := getDbInfo()
 
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", username, password, dbname)
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s sslmode=disable", dbInfo.User, dbInfo.Password, dbInfo.Dbname, dbInfo.Host)
 
-	db, dbErr := sql.Open("postgres", connStr)
+	db, dbErr := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 
 	if dbErr != nil {
 		slog.Error(dbErr.Error())
 	}
 
 	return db
-}
-
-func init() {
-	err := GetConnect().Ping()
-
-	if err != nil {
-		slog.Error(err.Error())
-	}
-
-	log.Println("Iniciada a conexão com o banco")
 }

@@ -15,70 +15,38 @@ func NewTodoRepository() *TodoRepositoryImpl {
 }
 
 func (tri *TodoRepositoryImpl) List() []domain.Todo {
-	connect := database.GetConnect()
-	rows, err := connect.Query("select * from todo")
+	db := database.GetConnect()
 
-	defer rows.Close()
+	var todo []domain.Todo
+	db.Find(&todo)
 
-	if err != nil {
-		slog.Error(err.Error())
-	}
-
-	todos := []domain.Todo{}
-
-	for rows.Next() {
-		var todo domain.Todo
-		rowErr := rows.Scan(&todo.ID, &todo.Name, &todo.Description, &todo.Done)
-		if rowErr != nil {
-			slog.Error(rowErr.Error())
-			continue
-		}
-		todos = append(todos, todo)
-	}
-
-	return todos
+	return todo
 }
 
 func (tri *TodoRepositoryImpl) Insert(todo *domain.Todo) (domain.Todo, error) {
-	connect := database.GetConnect()
-
+	db := database.GetConnect()
 	todo.ID = uuid.New().String()
 
+	db.Create(&todo)
+
 	slog.Info("Inser new todo", "todo", *todo)
-
-	_, insertErr := connect.Exec("insert into todo (id, name, description, done) values ($1, $2, $3, $4)", todo.ID, todo.Name, todo.Description, todo.Done)
-
-	if insertErr != nil {
-		slog.Error(insertErr.Error())
-		return domain.Todo{}, insertErr
-	}
 
 	return *todo, nil
 }
 
 func (tri *TodoRepositoryImpl) Update(id string, todo *domain.Todo) (domain.Todo, error) {
-	connect := database.GetConnect()
-	_, err := connect.Exec("update todo set name=$1, description=$2, done=$3 where id=$4", todo.Name, todo.Description, todo.Done, id)
-
-	if err != nil {
-		slog.Error(err.Error())
-		return domain.Todo{}, err
-	}
-
+	db := database.GetConnect()
 	todo.ID = id
+
+	db.Save(&todo)
 
 	return *todo, nil
 }
 
 func (tri *TodoRepositoryImpl) Delete(id string) error {
-	connect := database.GetConnect()
+	db := database.GetConnect()
 
-	_, err := connect.Exec("delete from todo where id=$1", id)
+	err := db.Delete(&domain.Todo{}, id)
 
-	if err != nil {
-		slog.Error(err.Error())
-		return err
-	}
-
-	return nil
+	return err.Error
 }
