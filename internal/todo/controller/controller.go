@@ -1,82 +1,76 @@
 package controller
 
 import (
-	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	"github.com/gsantosc18/todo/internal/todo/domain"
 	"github.com/gsantosc18/todo/internal/todo/service"
 )
 
 var todoService service.TodoService = *service.NewTodoService()
 
-func ListTodoHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(todoService.ListTodo())
+func ListTodoHandler(context *gin.Context) {
+	todos := todoService.ListTodo()
+
+	context.JSON(http.StatusOK, todos)
 }
 
-func CreateTodoHandler(w http.ResponseWriter, r *http.Request) {
+func CreateTodoHandler(context *gin.Context) {
 	var todo domain.Todo
 
-	err := json.NewDecoder(r.Body).Decode(&todo)
+	bindErr := context.ShouldBind(&todo)
 
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(domain.Response{Message: "Decode body error", Error: err.Error()})
+	if bindErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid parameters",
+			"error":   bindErr.Error(),
+		})
 		return
 	}
 
-	insertedTodo, insertErr := todoService.InserTodo(&todo)
+	savedTodo, insertErr := todoService.InserTodo(&todo)
 
 	if insertErr != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(domain.Response{Message: "There was an error inserting todo", Error: insertErr.Error()})
+		context.JSON(http.StatusCreated, gin.H{
+			"message": "Created new todo",
+			"error":   insertErr.Error(),
+		})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(insertedTodo)
+	context.JSON(http.StatusCreated, savedTodo)
 }
 
-func UpdateTodoHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id := params["id"]
+func UpdateTodoHandler(context *gin.Context) {
+	id := context.Param("id")
 
 	var todo domain.Todo
+	context.ShouldBind(&todo)
 
-	decodeErr := json.NewDecoder(r.Body).Decode(&todo)
+	todo.ID = id
 
-	if decodeErr != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(domain.Response{Message: "Decode todo error", Error: decodeErr.Error()})
-		return
-	}
+	todoService.UpdateTodo(id, &todo)
 
-	updatedTodo, updateErr := todoService.UpdateTodo(id, &todo)
-
-	if updateErr != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(domain.Response{Message: "There are an error updating todo", Error: updateErr.Error()})
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(updatedTodo)
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Updated todo",
+	})
 }
 
-func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id := params["id"]
+func DeleteTodoHandler(context *gin.Context) {
+	id := context.Param("id")
 
 	err := todoService.DeleteTodo(id)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(domain.Response{Message: "Fail to delete todo", Error: err.Error()})
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "There are a error on delete todo",
+			"error":   err.Error(),
+		})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(domain.Response{Message: "Todo deleted with success"})
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Todo deleted with success",
+	})
 }

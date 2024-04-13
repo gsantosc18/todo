@@ -1,14 +1,13 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"log/slog"
 
 	_ "github.com/gsantosc18/todo/internal/todo/config/log"
 	"github.com/gsantosc18/todo/internal/todo/router"
 )
 
 func main() {
-	log.Println("Started web server")
-	http.ListenAndServe(":8080", router.Initialize())
+	slog.Info("Started web server")
+	router.Initialize()
 }

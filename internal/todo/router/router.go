@@ -1,17 +1,17 @@
 package router
 
 import (
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	"github.com/gsantosc18/todo/internal/todo/controller"
 )
 
-func Initialize() *mux.Router {
-	router := mux.NewRouter()
+func Initialize() {
+	route := gin.Default()
 
-	router.HandleFunc("/todo", controller.ListTodoHandler).Methods("GET")
-	router.HandleFunc("/todo", controller.CreateTodoHandler).Methods("POST")
-	router.HandleFunc("/todo/{id}", controller.UpdateTodoHandler).Methods("PUT")
-	router.HandleFunc("/todo/{id}", controller.DeleteTodoHandler).Methods("DELETE")
+	route.GET("/todo", controller.ListTodoHandler)
+	route.POST("/todo", controller.CreateTodoHandler)
+	route.PUT("/todo/:id", controller.UpdateTodoHandler)
+	route.DELETE("/todo/:id", controller.DeleteTodoHandler)
 
-	return router
+	route.Run(":8080")
 }
