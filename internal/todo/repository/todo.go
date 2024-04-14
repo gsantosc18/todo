@@ -46,14 +46,6 @@ func (tri *TodoRepositoryImpl) Update(id string, todo *domain.Todo) (domain.Todo
 func (tri *TodoRepositoryImpl) Delete(id string) error {
 	db := database.GetConnect()
 
-	var todo domain.Todo
-
-	firstErr := db.First(todo, "id = ?", id)
-
-	if firstErr != nil {
-		return firstErr.Error
-	}
-
 	err := db.Delete(&domain.Todo{ID: id})
 
 	return err.Error
