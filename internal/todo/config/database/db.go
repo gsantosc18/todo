@@ -2,11 +2,9 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"log/slog"
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -29,12 +27,6 @@ func getDbInfo() *db {
 }
 
 func GetConnect() *gorm.DB {
-	err := godotenv.Load()
-
-	if err != nil {
-		log.Printf("Houve um erro ao carregar as variáveis de ambiente, erro=%s", err.Error())
-	}
-
 	dbInfo := getDbInfo()
 
 	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s sslmode=disable", dbInfo.User, dbInfo.Password, dbInfo.Dbname, dbInfo.Host)
