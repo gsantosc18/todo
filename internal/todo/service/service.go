@@ -9,8 +9,8 @@ type TodoService struct {
 	todoRepository repository.TodoRepository
 }
 
-func NewTodoService() *TodoService {
-	return &TodoService{todoRepository: repository.NewTodoRepository()}
+func NewTodoService(todoRepository repository.TodoRepository) *TodoService {
+	return &TodoService{todoRepository: todoRepository}
 }
 
 func (ts *TodoService) ListTodo() []domain.Todo {

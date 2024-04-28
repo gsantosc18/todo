@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	securityController "github.com/gsantosc18/todo/internal/security/controller"
-	"github.com/gsantosc18/todo/internal/security/service"
-
+	securityService "github.com/gsantosc18/todo/internal/security/service"
 	"github.com/gsantosc18/todo/internal/todo/controller"
+	"github.com/gsantosc18/todo/internal/todo/service"
 )
 
 func auth() gin.HandlerFunc {
@@ -25,24 +25,22 @@ func auth() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 
-		if isValidToken := service.ValidateToken(token); !isValidToken {
+		if isValidToken := securityService.ValidateToken(token); !isValidToken {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 	}
 }
 
-func Initialize() {
-	route := gin.Default()
-
+func GetTodoRoutes(route *gin.Engine, s *service.TodoService) {
 	route.POST("/login", securityController.LoginController)
+
+	todoController := controller.NewTodoService(s)
 
 	todo := route.Group("/todo", auth())
 	{
-		todo.GET("/", controller.ListTodoHandler)
-		todo.POST("/", controller.CreateTodoHandler)
-		todo.PUT("/:id", controller.UpdateTodoHandler)
-		todo.DELETE("/:id", controller.DeleteTodoHandler)
+		todo.GET("/", todoController.ListTodoHandler)
+		todo.POST("/", todoController.CreateTodoHandler)
+		todo.PUT("/:id", todoController.UpdateTodoHandler)
+		todo.DELETE("/:id", todoController.DeleteTodoHandler)
 	}
-
-	route.Run(":8080")
 }

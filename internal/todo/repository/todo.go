@@ -4,30 +4,31 @@ import (
 	"log/slog"
 
 	"github.com/google/uuid"
-	"github.com/gsantosc18/todo/internal/todo/config/database"
 	"github.com/gsantosc18/todo/internal/todo/domain"
+	"gorm.io/gorm"
 )
 
-type TodoRepositoryImpl struct{}
+type TodoRepositoryImpl struct {
+	db *gorm.DB
+}
 
-func NewTodoRepository() *TodoRepositoryImpl {
-	return &TodoRepositoryImpl{}
+func NewTodoRepository(db *gorm.DB) *TodoRepositoryImpl {
+	return &TodoRepositoryImpl{
+		db: db,
+	}
 }
 
 func (tri *TodoRepositoryImpl) List() []domain.Todo {
-	db := database.GetConnect()
-
 	var todo []domain.Todo
-	db.Find(&todo)
+	tri.db.Find(&todo)
 
 	return todo
 }
 
 func (tri *TodoRepositoryImpl) Insert(todo *domain.Todo) (domain.Todo, error) {
-	db := database.GetConnect()
 	todo.ID = uuid.New().String()
 
-	db.Create(&todo)
+	tri.db.Create(&todo)
 
 	slog.Info("Inser new todo", "todo", *todo)
 
@@ -35,18 +36,16 @@ func (tri *TodoRepositoryImpl) Insert(todo *domain.Todo) (domain.Todo, error) {
 }
 
 func (tri *TodoRepositoryImpl) Update(id string, todo *domain.Todo) (domain.Todo, error) {
-	db := database.GetConnect()
 	todo.ID = id
 
-	db.Save(&todo)
+	tri.db.Save(&todo)
 
 	return *todo, nil
 }
 
 func (tri *TodoRepositoryImpl) Delete(id string) error {
-	db := database.GetConnect()
 
-	err := db.Delete(&domain.Todo{ID: id})
+	err := tri.db.Delete(&domain.Todo{ID: id})
 
 	return err.Error
 }
