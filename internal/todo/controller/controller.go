@@ -8,15 +8,23 @@ import (
 	"github.com/gsantosc18/todo/internal/todo/service"
 )
 
-var todoService service.TodoService = *service.NewTodoService()
+type TodoController struct {
+	todoService *service.TodoService
+}
 
-func ListTodoHandler(context *gin.Context) {
-	todos := todoService.ListTodo()
+func NewTodoService(todoService *service.TodoService) *TodoController {
+	return &TodoController{
+		todoService: todoService,
+	}
+}
+
+func (tc *TodoController) ListTodoHandler(context *gin.Context) {
+	todos := tc.todoService.ListTodo()
 
 	context.JSON(http.StatusOK, todos)
 }
 
-func CreateTodoHandler(context *gin.Context) {
+func (tc *TodoController) CreateTodoHandler(context *gin.Context) {
 	var todo domain.Todo
 
 	bindErr := context.ShouldBind(&todo)
@@ -29,7 +37,7 @@ func CreateTodoHandler(context *gin.Context) {
 		return
 	}
 
-	savedTodo, insertErr := todoService.InserTodo(&todo)
+	savedTodo, insertErr := tc.todoService.InserTodo(&todo)
 
 	if insertErr != nil {
 		context.JSON(http.StatusCreated, gin.H{
@@ -42,7 +50,7 @@ func CreateTodoHandler(context *gin.Context) {
 	context.JSON(http.StatusCreated, savedTodo)
 }
 
-func UpdateTodoHandler(context *gin.Context) {
+func (tc *TodoController) UpdateTodoHandler(context *gin.Context) {
 	id := context.Param("id")
 
 	var todo domain.Todo
@@ -50,17 +58,17 @@ func UpdateTodoHandler(context *gin.Context) {
 
 	todo.ID = id
 
-	todoService.UpdateTodo(id, &todo)
+	tc.todoService.UpdateTodo(id, &todo)
 
 	context.JSON(http.StatusOK, gin.H{
 		"message": "Updated todo",
 	})
 }
 
-func DeleteTodoHandler(context *gin.Context) {
+func (tc *TodoController) DeleteTodoHandler(context *gin.Context) {
 	id := context.Param("id")
 
-	err := todoService.DeleteTodo(id)
+	err := tc.todoService.DeleteTodo(id)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
