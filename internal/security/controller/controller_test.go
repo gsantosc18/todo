@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -61,4 +63,76 @@ func TestLogin(t *testing.T) {
 
 	assert.Equal(t, expectedToken, string(result))
 	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestLoginErrorBind(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	w := httptest.NewRecorder()
+	ctx := getTestContext(w)
+	ctx.Request.Body = io.NopCloser(strings.NewReader("{"))
+
+	service := mock.NewMockTokenService(ctrl)
+
+	service.EXPECT().
+		NewToken(gomock.Any()).
+		Times(0)
+
+	controller := NewSecurityController(service)
+
+	controller.LoginController(ctx)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+func TestLoginErrorGenerateToken(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	userJson, _ := json.Marshal(mockUser)
+
+	w := httptest.NewRecorder()
+	ctx := getTestContext(w)
+	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(userJson))
+
+	service := mock.NewMockTokenService(ctrl)
+
+	service.EXPECT().
+		NewToken(gomock.Any()).
+		Return("", errors.New("Internal error"))
+
+	controller := NewSecurityController(service)
+
+	controller.LoginController(ctx)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+}
+
+func TestLoginErrorInvalidCredentials(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	invalidUser := userLogin{
+		Email:    "email",
+		Password: "password",
+	}
+
+	userJson, _ := json.Marshal(invalidUser)
+
+	w := httptest.NewRecorder()
+	ctx := getTestContext(w)
+	ctx.Request.Body = io.NopCloser(bytes.NewBuffer(userJson))
+
+	service := mock.NewMockTokenService(ctrl)
+
+	service.EXPECT().
+		NewToken(gomock.Any()).
+		Times(0)
+
+	controller := NewSecurityController(service)
+
+	controller.LoginController(ctx)
+
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
 }
