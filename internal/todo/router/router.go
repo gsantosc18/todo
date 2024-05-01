@@ -31,10 +31,10 @@ func auth() gin.HandlerFunc {
 	}
 }
 
-func GetTodoRoutes(route *gin.Engine, s *service.TodoService) {
+func GetTodoRoutes(route *gin.Engine, s service.TodoService) {
 	route.POST("/login", securityController.LoginController)
 
-	todoController := controller.NewTodoService(s)
+	todoController := controller.NewTodoController(s)
 
 	todo := route.Group("/todo", auth())
 	{

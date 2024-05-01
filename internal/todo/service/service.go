@@ -5,26 +5,26 @@ import (
 	"github.com/gsantosc18/todo/internal/todo/repository"
 )
 
-type TodoService struct {
+type TodoServiceImpl struct {
 	todoRepository repository.TodoRepository
 }
 
-func NewTodoService(todoRepository repository.TodoRepository) *TodoService {
-	return &TodoService{todoRepository: todoRepository}
+func NewTodoService(todoRepository repository.TodoRepository) TodoService {
+	return &TodoServiceImpl{todoRepository: todoRepository}
 }
 
-func (ts *TodoService) ListTodo() []domain.Todo {
+func (ts *TodoServiceImpl) ListTodo() []domain.Todo {
 	return ts.todoRepository.List()
 }
 
-func (ts *TodoService) InserTodo(todo *domain.Todo) (domain.Todo, error) {
+func (ts *TodoServiceImpl) InserTodo(todo *domain.Todo) (domain.Todo, error) {
 	return ts.todoRepository.Insert(todo)
 }
 
-func (ts *TodoService) UpdateTodo(id string, todo *domain.Todo) (domain.Todo, error) {
+func (ts *TodoServiceImpl) UpdateTodo(id string, todo *domain.Todo) (domain.Todo, error) {
 	return ts.todoRepository.Update(id, todo)
 }
 
-func (ts *TodoService) DeleteTodo(id string) error {
+func (ts *TodoServiceImpl) DeleteTodo(id string) error {
 	return ts.todoRepository.Delete(id)
 }

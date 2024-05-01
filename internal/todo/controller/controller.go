@@ -9,10 +9,10 @@ import (
 )
 
 type TodoController struct {
-	todoService *service.TodoService
+	todoService service.TodoService
 }
 
-func NewTodoService(todoService *service.TodoService) *TodoController {
+func NewTodoController(todoService service.TodoService) *TodoController {
 	return &TodoController{
 		todoService: todoService,
 	}
@@ -40,9 +40,8 @@ func (tc *TodoController) CreateTodoHandler(context *gin.Context) {
 	savedTodo, insertErr := tc.todoService.InserTodo(&todo)
 
 	if insertErr != nil {
-		context.JSON(http.StatusCreated, gin.H{
-			"message": "Created new todo",
-			"error":   insertErr.Error(),
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"error": insertErr.Error(),
 		})
 		return
 	}
@@ -54,11 +53,26 @@ func (tc *TodoController) UpdateTodoHandler(context *gin.Context) {
 	id := context.Param("id")
 
 	var todo domain.Todo
-	context.ShouldBind(&todo)
+	bindErr := context.ShouldBind(&todo)
+
+	if bindErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid parameters",
+			"error":   bindErr.Error(),
+		})
+		return
+	}
 
 	todo.ID = id
 
-	tc.todoService.UpdateTodo(id, &todo)
+	_, updateErr := tc.todoService.UpdateTodo(id, &todo)
+
+	if updateErr != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"error": updateErr.Error(),
+		})
+		return
+	}
 
 	context.JSON(http.StatusOK, gin.H{
 		"message": "Updated todo",
