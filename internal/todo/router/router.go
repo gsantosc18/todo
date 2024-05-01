@@ -10,7 +10,7 @@ import (
 	"github.com/gsantosc18/todo/internal/todo/service"
 )
 
-func auth() gin.HandlerFunc {
+func auth(tokenService securityService.TokenService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearer := "Bearer "
 		authorization := c.GetHeader("Authorization")
@@ -25,18 +25,21 @@ func auth() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 
-		if isValidToken := securityService.ValidateToken(token); !isValidToken {
+		if isValidToken := tokenService.ValidateToken(token); !isValidToken {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 	}
 }
 
 func GetTodoRoutes(route *gin.Engine, s service.TodoService) {
-	route.POST("/login", securityController.LoginController)
+	ss := securityService.NewTokenService()
+	sc := securityController.NewSecurityController(ss)
+
+	route.POST("/login", sc.LoginController)
 
 	todoController := controller.NewTodoController(s)
 
-	todo := route.Group("/todo", auth())
+	todo := route.Group("/todo", auth(ss))
 	{
 		todo.GET("/", todoController.ListTodoHandler)
 		todo.POST("/", todoController.CreateTodoHandler)
