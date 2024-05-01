@@ -10,7 +10,7 @@ env:
   GO_VERSION: 1.21.x
 
 jobs:
-  build:
+  unit-test:
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
