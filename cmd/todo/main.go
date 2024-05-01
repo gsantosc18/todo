@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -35,5 +36,5 @@ func main() {
 
 	router.GetTodoRoutes(route, todoService)
 
-	route.Run(":8080")
+	route.Run(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }
