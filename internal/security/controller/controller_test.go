@@ -60,5 +60,5 @@ func TestLogin(t *testing.T) {
 	result, _ := io.ReadAll(w.Body)
 
 	assert.Equal(t, expectedToken, string(result))
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
