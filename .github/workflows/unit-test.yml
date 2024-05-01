@@ -1,6 +1,10 @@
 name: unit-test
 
-on: [push, pull_request]
+on:
+  pull_request: 
+    branches: ['**']
+  push: 
+    branches: ['main']
 
 env:
   GO_VERSION: 1.21.x
