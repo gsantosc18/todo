@@ -12,8 +12,12 @@ type SecurityController struct {
 }
 
 type userLogin struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" example:"email"`
+	Password string `json:"password" example:"s3cr3t3"`
+}
+
+type tokenResponse struct {
+	Token string `json:"token" example:"asdfasdfasdf"`
 }
 
 func NewSecurityController(tokenService service.TokenService) *SecurityController {
@@ -22,6 +26,17 @@ func NewSecurityController(tokenService service.TokenService) *SecurityControlle
 	}
 }
 
+// Login
+//
+//	@Summary	Login
+//	@Schemes
+//	@Description	Gerador de token de acesso
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		controller.userLogin	true	"Requisição de login"
+//	@Success		200		{object}	controller.tokenResponse
+//	@Router			/login [post]
 func (s SecurityController) LoginController(c *gin.Context) {
 	var user userLogin
 	bindErr := c.ShouldBind(&user)
@@ -49,7 +64,9 @@ func (s SecurityController) LoginController(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-	})
+	response := tokenResponse{
+		Token: token,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

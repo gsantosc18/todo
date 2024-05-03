@@ -1,0 +1,47 @@
+basePath: /
+definitions:
+  controller.tokenResponse:
+    properties:
+      token:
+        example: asdfasdfasdf
+        type: string
+    type: object
+  controller.userLogin:
+    properties:
+      email:
+        example: email
+        type: string
+      password:
+        example: s3cr3t3
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Poc para estudos de GO
+  title: Todo list
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Gerador de token de acesso
+      parameters:
+      - description: Requisição de login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.userLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.tokenResponse'
+      summary: Login
+      tags:
+      - user
+swagger: "2.0"
