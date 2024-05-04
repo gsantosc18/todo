@@ -20,6 +20,10 @@ type tokenResponse struct {
 	Token string `json:"token" example:"asdfasdfasdf"`
 }
 
+type errorResponse struct {
+	Error string `json:"error" example:"Error message"`
+}
+
 func NewSecurityController(tokenService service.TokenService) *SecurityController {
 	return &SecurityController{
 		tokenService: tokenService,
@@ -34,23 +38,25 @@ func NewSecurityController(tokenService service.TokenService) *SecurityControlle
 //	@Tags			user
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		controller.userLogin	true	"Requisição de login"
+//	@Param			request	body		controller.userLogin	true	"Informações de login"
 //	@Success		200		{object}	controller.tokenResponse
+//	@Failure		401		{object}	controller.errorResponse
+//	@Failure		400		{object}	controller.errorResponse
 //	@Router			/login [post]
 func (s SecurityController) LoginController(c *gin.Context) {
 	var user userLogin
 	bindErr := c.ShouldBind(&user)
 
 	if bindErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid credentials",
+		c.JSON(http.StatusBadRequest, errorResponse{
+			Error: "Invalid parameters",
 		})
 		return
 	}
 
 	if user.Email != "admin" && user.Password != "admin" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Invalid credentials",
+		c.JSON(http.StatusUnauthorized, errorResponse{
+			Error: "Invalid credentials",
 		})
 		return
 	}
@@ -58,8 +64,8 @@ func (s SecurityController) LoginController(c *gin.Context) {
 	token, tokenError := s.tokenService.NewToken(user.Email)
 
 	if tokenError != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": tokenError.Error(),
+		c.JSON(http.StatusInternalServerError, errorResponse{
+			Error: tokenError.Error(),
 		})
 		return
 	}

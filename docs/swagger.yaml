@@ -1,5 +1,20 @@
 basePath: /
 definitions:
+  controller.errorResponse:
+    properties:
+      error:
+        example: Error message
+        type: string
+    type: object
+  controller.response:
+    properties:
+      error:
+        example: Error message
+        type: string
+      message:
+        example: Message
+        type: string
+    type: object
   controller.tokenResponse:
     properties:
       token:
@@ -15,6 +30,20 @@ definitions:
         example: s3cr3t3
         type: string
     type: object
+  domain.Todo:
+    properties:
+      description:
+        example: Example description
+        type: string
+      done:
+        type: boolean
+      id:
+        example: "1"
+        type: string
+      name:
+        example: Example name
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -28,7 +57,7 @@ paths:
       - application/json
       description: Gerador de token de acesso
       parameters:
-      - description: Requisição de login
+      - description: Informações de login
         in: body
         name: request
         required: true
@@ -41,7 +70,112 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/controller.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.errorResponse'
       summary: Login
       tags:
       - user
+  /todo:
+    get:
+      consumes:
+      - application/json
+      description: Listagem de todos cadatrados
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Todo'
+            type: array
+        "401":
+          description: Token inválido
+          schema:
+            type: string
+      summary: Lista os todos
+      tags:
+      - todo
+    post:
+      consumes:
+      - application/json
+      description: Criar novo todo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Todo'
+        "400":
+          description: Request inválido
+          schema:
+            $ref: '#/definitions/controller.response'
+        "401":
+          description: Token inválido
+          schema:
+            $ref: '#/definitions/controller.response'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            $ref: '#/definitions/controller.response'
+      tags:
+      - todo
+  /todo/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Apaga um todo pelo identificado
+      parameters:
+      - description: Identificado único do todo
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.response'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            $ref: '#/definitions/controller.response'
+      tags:
+      - todo
+    put:
+      consumes:
+      - application/json
+      description: Atualizar um todo existente
+      parameters:
+      - description: Identificador do todo
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Atualizado com sucesso
+          schema:
+            $ref: '#/definitions/controller.response'
+        "400":
+          description: Payload inválido
+          schema:
+            $ref: '#/definitions/controller.response'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            $ref: '#/definitions/controller.response'
+      tags:
+      - todo
 swagger: "2.0"
