@@ -24,11 +24,14 @@ func logConfig() {
 	slog.SetDefault(jsonLogger)
 }
 
-// @title			Todo list
-// @version		1.0
-// @description	Poc para estudos de GO
-// @host			localhost:8080
-// @BasePath		/
+//	@title						Todo list
+//	@version					1.0
+//	@description				Poc para estudos de GO
+//	@host						localhost:8080
+//	@BasePath					/
+//	@securityDefinitions.apikey	ApiKeyAuth
+//	@in							header
+//	@name						Authorization
 func main() {
 	godotenv.Load()
 	logConfig()

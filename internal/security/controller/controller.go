@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -39,7 +40,7 @@ func NewSecurityController(tokenService service.TokenService) *SecurityControlle
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		controller.userLogin	true	"Informações de login"
-//	@Success		200		{object}	controller.tokenResponse
+//	@Success		200		{string}	string					"Token de acesso"
 //	@Failure		401		{object}	controller.errorResponse
 //	@Failure		400		{object}	controller.errorResponse
 //	@Router			/login [post]
@@ -70,9 +71,5 @@ func (s SecurityController) LoginController(c *gin.Context) {
 		return
 	}
 
-	response := tokenResponse{
-		Token: token,
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, fmt.Sprintf("Bearer %s", token))
 }

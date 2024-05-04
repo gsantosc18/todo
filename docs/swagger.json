@@ -35,9 +35,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Token de acesso",
                         "schema": {
-                            "$ref": "#/definitions/controller.tokenResponse"
+                            "type": "string"
                         }
                     },
                     "400": {
@@ -57,6 +57,11 @@
         },
         "/todo": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Listagem de todos cadatrados",
                 "consumes": [
                     "application/json"
@@ -87,6 +92,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Criar novo todo",
                 "consumes": [
                     "application/json"
@@ -127,6 +137,11 @@
         },
         "/todo/{id}": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Atualizar um todo existente",
                 "consumes": [
                     "application/json"
@@ -168,6 +183,11 @@
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Apaga um todo pelo identificado",
                 "consumes": [
                     "application/json"
@@ -227,15 +247,6 @@
                 }
             }
         },
-        "controller.tokenResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string",
-                    "example": "asdfasdfasdf"
-                }
-            }
-        },
         "controller.userLogin": {
             "type": "object",
             "properties": {
@@ -268,6 +279,13 @@
                     "example": "Example name"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

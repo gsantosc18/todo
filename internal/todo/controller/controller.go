@@ -31,8 +31,9 @@ func NewTodoController(todoService service.TodoService) *TodoController {
 //	@Tags			todo
 //	@Accept			json
 //	@Produce		json
+//	@Security		ApiKeyAuth
 //	@Success		200	{object}	[]domain.Todo
-//	@failure		401	{string}	string	"Token inválido"
+//	@Failure		401	{string}	string	"Token inválido"
 //	@Router			/todo [get]
 func (tc *TodoController) ListTodoHandler(context *gin.Context) {
 	todos := tc.todoService.ListTodo()
@@ -48,10 +49,11 @@ func (tc *TodoController) ListTodoHandler(context *gin.Context) {
 //	@Tags			todo
 //	@Accept			json
 //	@Produce		json
+//	@Security		ApiKeyAuth
 //	@Success		200		{object}	domain.Todo
-//	@failure		401		{object}	controller.response	"Token inválido"
-//	@failure		400		{object}	controller.response	"Request inválido"
-//	@failure		500		{object}	controller.response	"Erro interno do servidor"
+//	@Failure		401		{object}	controller.response	"Token inválido"
+//	@Failure		400		{object}	controller.response	"Request inválido"
+//	@Failure		500		{object}	controller.response	"Erro interno do servidor"
 //	@Router			/todo	[post]
 func (tc *TodoController) CreateTodoHandler(context *gin.Context) {
 	var todo domain.Todo
@@ -86,10 +88,11 @@ func (tc *TodoController) CreateTodoHandler(context *gin.Context) {
 //	@Tags			todo
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		string				true	"Identificador do todo"
+//	@Param			id	path	string	true	"Identificador do todo"
+//	@Security		ApiKeyAuth
 //	@Success		200	{object}	controller.response	"Atualizado com sucesso"
-//	@failure		400	{object}	controller.response	"Payload inválido"
-//	@failure		500	{object}	controller.response	"Erro interno do servidor"
+//	@Failure		400	{object}	controller.response	"Payload inválido"
+//	@Failure		500	{object}	controller.response	"Erro interno do servidor"
 //	@Router			/todo/{id} [put]
 func (tc *TodoController) UpdateTodoHandler(context *gin.Context) {
 	id := context.Param("id")
@@ -129,9 +132,10 @@ func (tc *TodoController) UpdateTodoHandler(context *gin.Context) {
 //	@Tags			todo
 //	@Accept			json
 //	@Produce		json
-//	@Param			id			path		string	true	"Identificado único do todo"
+//	@Param			id	path	string	true	"Identificado único do todo"
+//	@Security		ApiKeyAuth
 //	@Success		200			{object}	controller.response
-//	@failure		500			{object}	controller.response	"Erro interno do servidor"
+//	@Failure		500			{object}	controller.response	"Erro interno do servidor"
 //	@Router			/todo/{id}	[delete]
 func (tc *TodoController) DeleteTodoHandler(context *gin.Context) {
 	id := context.Param("id")

@@ -41,9 +41,9 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Token de acesso",
                         "schema": {
-                            "$ref": "#/definitions/controller.tokenResponse"
+                            "type": "string"
                         }
                     },
                     "400": {
@@ -63,6 +63,11 @@ const docTemplate = `{
         },
         "/todo": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Listagem de todos cadatrados",
                 "consumes": [
                     "application/json"
@@ -93,6 +98,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Criar novo todo",
                 "consumes": [
                     "application/json"
@@ -133,6 +143,11 @@ const docTemplate = `{
         },
         "/todo/{id}": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Atualizar um todo existente",
                 "consumes": [
                     "application/json"
@@ -174,6 +189,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Apaga um todo pelo identificado",
                 "consumes": [
                     "application/json"
@@ -233,15 +253,6 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.tokenResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string",
-                    "example": "asdfasdfasdf"
-                }
-            }
-        },
         "controller.userLogin": {
             "type": "object",
             "properties": {
@@ -274,6 +285,13 @@ const docTemplate = `{
                     "example": "Example name"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

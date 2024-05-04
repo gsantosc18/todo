@@ -15,12 +15,6 @@ definitions:
         example: Message
         type: string
     type: object
-  controller.tokenResponse:
-    properties:
-      token:
-        example: asdfasdfasdf
-        type: string
-    type: object
   controller.userLogin:
     properties:
       email:
@@ -67,9 +61,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Token de acesso
           schema:
-            $ref: '#/definitions/controller.tokenResponse'
+            type: string
         "400":
           description: Bad Request
           schema:
@@ -99,6 +93,8 @@ paths:
           description: Token inválido
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: Lista os todos
       tags:
       - todo
@@ -125,6 +121,8 @@ paths:
           description: Erro interno do servidor
           schema:
             $ref: '#/definitions/controller.response'
+      security:
+      - ApiKeyAuth: []
       tags:
       - todo
   /todo/{id}:
@@ -149,6 +147,8 @@ paths:
           description: Erro interno do servidor
           schema:
             $ref: '#/definitions/controller.response'
+      security:
+      - ApiKeyAuth: []
       tags:
       - todo
     put:
@@ -176,6 +176,13 @@ paths:
           description: Erro interno do servidor
           schema:
             $ref: '#/definitions/controller.response'
+      security:
+      - ApiKeyAuth: []
       tags:
       - todo
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
