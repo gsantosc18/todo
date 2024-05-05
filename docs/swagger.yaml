@@ -1,0 +1,188 @@
+basePath: /
+definitions:
+  controller.errorResponse:
+    properties:
+      error:
+        example: Error message
+        type: string
+    type: object
+  controller.response:
+    properties:
+      error:
+        example: Error message
+        type: string
+      message:
+        example: Message
+        type: string
+    type: object
+  controller.userLogin:
+    properties:
+      email:
+        example: email
+        type: string
+      password:
+        example: s3cr3t3
+        type: string
+    type: object
+  domain.Todo:
+    properties:
+      description:
+        example: Example description
+        type: string
+      done:
+        type: boolean
+      id:
+        example: "1"
+        type: string
+      name:
+        example: Example name
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Poc para estudos de GO
+  title: Todo list
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Gerador de token de acesso
+      parameters:
+      - description: Informações de login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/controller.userLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token de acesso
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controller.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/controller.errorResponse'
+      summary: Login
+      tags:
+      - user
+  /todo:
+    get:
+      consumes:
+      - application/json
+      description: Listagem de todos cadatrados
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Todo'
+            type: array
+        "401":
+          description: Token inválido
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Lista os todos
+      tags:
+      - todo
+    post:
+      consumes:
+      - application/json
+      description: Criar novo todo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Todo'
+        "400":
+          description: Request inválido
+          schema:
+            $ref: '#/definitions/controller.response'
+        "401":
+          description: Token inválido
+          schema:
+            $ref: '#/definitions/controller.response'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            $ref: '#/definitions/controller.response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - todo
+  /todo/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Apaga um todo pelo identificado
+      parameters:
+      - description: Identificado único do todo
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.response'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            $ref: '#/definitions/controller.response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - todo
+    put:
+      consumes:
+      - application/json
+      description: Atualizar um todo existente
+      parameters:
+      - description: Identificador do todo
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Atualizado com sucesso
+          schema:
+            $ref: '#/definitions/controller.response'
+        "400":
+          description: Payload inválido
+          schema:
+            $ref: '#/definitions/controller.response'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            $ref: '#/definitions/controller.response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - todo
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

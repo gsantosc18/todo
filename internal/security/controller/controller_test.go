@@ -43,7 +43,7 @@ func TestLogin(t *testing.T) {
 	w := httptest.NewRecorder()
 	ctx := getTestContext(w)
 	token := "encrypted-bearer"
-	expectedToken := fmt.Sprintf("{\"token\":\"%s\"}", token)
+	expectedToken := fmt.Sprintf("\"Bearer %s\"", token)
 	userJson, _ := json.Marshal(mockUser)
 
 	ctx.Request.Body = io.NopCloser(strings.NewReader(string(userJson)))
