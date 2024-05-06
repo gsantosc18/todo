@@ -17,10 +17,6 @@ type userLogin struct {
 	Password string `json:"password" example:"s3cr3t3"`
 }
 
-type tokenResponse struct {
-	Token string `json:"token" example:"asdfasdfasdf"`
-}
-
 type errorResponse struct {
 	Error string `json:"error" example:"Error message"`
 }
