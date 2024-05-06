@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gsantosc18/todo/internal/todo/config/database"
+	"github.com/gsantosc18/todo/internal/todo/message"
 	"github.com/gsantosc18/todo/internal/todo/repository"
 	"github.com/gsantosc18/todo/internal/todo/router"
 	"github.com/gsantosc18/todo/internal/todo/service"
@@ -24,6 +25,8 @@ func logConfig() {
 	slog.SetDefault(jsonLogger)
 }
 
+// Main todo
+//
 //	@title						Todo list
 //	@version					1.0
 //	@description				Poc para estudos de GO
@@ -45,6 +48,12 @@ func main() {
 
 	todoRepository := repository.NewTodoRepository(db)
 	todoService := service.NewTodoService(todoRepository)
+
+	todoConsumer := message.NewTodoConsumer(todoService)
+
+	message.AddedReceiver(todoConsumer)
+
+	go message.StartConsumers()
 
 	router.GetTodoRoutes(route, todoService)
 
