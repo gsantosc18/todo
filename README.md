@@ -2,6 +2,10 @@
 
 Este projeto é uma aplicação simples de lista de tarefas (ToDo List), implementada usando Go (Golang) com o framework Gin-Gonic. A API permite aos usuários criar, visualizar, atualizar e deletar tarefas. Inclui autenticação JWT para segurança e utiliza PostgreSQL como banco de dados. A documentação da API é feita com Swagger, oferecendo uma interface amigável para interação com a API.
 
+## Diagrama
+
+![Arquitetura da api todo](./docs/Todo-diagram.jpg)
+
 ## Funcionalidades
 
 - CRUD de tarefas:
@@ -9,8 +13,7 @@ Este projeto é uma aplicação simples de lista de tarefas (ToDo List), impleme
   - Ler tarefas
   - Atualizar tarefas
   - Deletar tarefas
-- Autenticação de usuários com JWT
-- Documentação da API com Swagger
+  - Criar tarefa a partir do kafka
 
 ## Tecnologias Utilizadas
 
@@ -19,6 +22,7 @@ Este projeto é uma aplicação simples de lista de tarefas (ToDo List), impleme
 - **[PostgreSQL](https://www.postgresql.org/)**: Banco de dados.
 - **[JWT-go](https://github.com/golang-jwt/jwt)**: Biblioteca para implementar autenticação JWT.
 - **[Swag](https://github.com/swaggo/swag)**: Ferramenta para gerar a documentação da API com Swagger.
+- **[Kafka](https://github.com/confluentinc/confluent-kafka-go)**: Ferramenta de mensageria.
 
 ## Pré-requisitos
 
@@ -26,6 +30,8 @@ Antes de iniciar, você precisará ter instalado em sua máquina:
 - Go (1.21.1 ou superior)
 - PostgreSQL
 - Git (opcional, para clonar o repositório)
+- Zookeeper
+- Kafka
 
 ## Configuração do Banco de Dados
 
