@@ -113,6 +113,17 @@ const docTemplate = `{
                 "tags": [
                     "todo"
                 ],
+                "parameters": [
+                    {
+                        "description": "Payload que será criado",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Todo"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -165,6 +176,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Payload que será atualizado",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Todo"
+                        }
                     }
                 ],
                 "responses": {
