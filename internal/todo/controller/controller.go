@@ -50,6 +50,7 @@ func (tc *TodoController) ListTodoHandler(context *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		ApiKeyAuth
+//	@Param			request	body	domain.Todo	true	"Payload que será criado"
 //	@Success		200		{object}	domain.Todo
 //	@Failure		401		{object}	controller.response	"Token inválido"
 //	@Failure		400		{object}	controller.response	"Request inválido"
@@ -88,7 +89,8 @@ func (tc *TodoController) CreateTodoHandler(context *gin.Context) {
 //	@Tags			todo
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path	string	true	"Identificador do todo"
+//	@Param			id		path	string		true	"Identificador do todo"
+//	@Param			request	body	domain.Todo	true	"Payload que será atualizado"
 //	@Security		ApiKeyAuth
 //	@Success		200	{object}	controller.response	"Atualizado com sucesso"
 //	@Failure		400	{object}	controller.response	"Payload inválido"

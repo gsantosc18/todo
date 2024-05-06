@@ -102,6 +102,13 @@ paths:
       consumes:
       - application/json
       description: Criar novo todo
+      parameters:
+      - description: Payload que será criado
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Todo'
       produces:
       - application/json
       responses:
@@ -161,6 +168,12 @@ paths:
         name: id
         required: true
         type: string
+      - description: Payload que será atualizado
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Todo'
       produces:
       - application/json
       responses:
