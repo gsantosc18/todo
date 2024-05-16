@@ -50,7 +50,7 @@ func (tc *TodoController) ListTodoHandler(context *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		ApiKeyAuth
-//	@Param			request	body	domain.Todo	true	"Payload que será criado"
+//	@Param			request	body		domain.Todo	true	"Payload que será criado"
 //	@Success		200		{object}	domain.Todo
 //	@Failure		401		{object}	controller.response	"Token inválido"
 //	@Failure		400		{object}	controller.response	"Request inválido"

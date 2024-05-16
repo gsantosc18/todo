@@ -1,11 +1,5 @@
 basePath: /
 definitions:
-  controller.errorResponse:
-    properties:
-      error:
-        example: Error message
-        type: string
-    type: object
   controller.response:
     properties:
       error:
@@ -15,13 +9,22 @@ definitions:
         example: Message
         type: string
     type: object
-  controller.userLogin:
+  domain.CreateUser:
     properties:
       email:
-        example: email
+        example: jhon.doel@example.com
+        type: string
+      first_name:
+        example: Jhon
+        type: string
+      last_name:
+        example: Doel
         type: string
       password:
         example: s3cr3t3
+        type: string
+      username:
+        example: jhondoel1995
         type: string
     type: object
   domain.Todo:
@@ -38,6 +41,42 @@ definitions:
         example: Example name
         type: string
     type: object
+  domain.Token:
+    properties:
+      expires_in:
+        type: integer
+      token:
+        example: asdfas-asdfasd-asdf-asdf-asdf
+        type: string
+    type: object
+  domain.User:
+    properties:
+      email:
+        example: user@email.com
+        type: string
+      enabled:
+        type: boolean
+      first_name:
+        example: John
+        type: string
+      id:
+        type: string
+      last_name:
+        example: Doel
+        type: string
+      username:
+        example: jhon_doel
+        type: string
+    type: object
+  domain.UserLogin:
+    properties:
+      password:
+        example: s3cr3t3
+        type: string
+      username:
+        example: jhondoel
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -49,30 +88,54 @@ paths:
     post:
       consumes:
       - application/json
-      description: Gerador de token de acesso
+      description: Gera o token de acesso do usuário
       parameters:
-      - description: Informações de login
+      - description: Informações do acesso
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/controller.userLogin'
+          $ref: '#/definitions/domain.UserLogin'
       produces:
       - application/json
       responses:
         "200":
-          description: Token de acesso
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Token'
+        "400":
+          description: Parâmetro inválidos
           schema:
             type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/controller.errorResponse'
         "401":
-          description: Unauthorized
+          description: Acesso não authorizado
           schema:
-            $ref: '#/definitions/controller.errorResponse'
-      summary: Login
+            type: string
+      tags:
+      - user
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Criar novo usuário
+      parameters:
+      - description: Informações do usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Parâmetro inválidos
+          schema:
+            type: string
       tags:
       - user
   /todo:

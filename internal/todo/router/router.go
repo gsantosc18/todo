@@ -1,45 +1,40 @@
 package router
 
 import (
-	"net/http"
+	"context"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	securityController "github.com/gsantosc18/todo/internal/security/controller"
-	securityService "github.com/gsantosc18/todo/internal/security/service"
+	"github.com/gsantosc18/todo/internal/config/keycloak"
 	"github.com/gsantosc18/todo/internal/todo/controller"
 	"github.com/gsantosc18/todo/internal/todo/service"
+	userController "github.com/gsantosc18/todo/internal/user/controller"
+	userService "github.com/gsantosc18/todo/internal/user/service"
 )
 
-func auth(tokenService securityService.TokenService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		bearer := "Bearer "
-		authorization := c.GetHeader("Authorization")
-
-		if len(authorization) == 0 {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		}
-
-		token := authorization[len(bearer):]
-
-		if len(token) == 0 {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		}
-
-		if isValidToken := tokenService.ValidateToken(token); !isValidToken {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		}
-	}
-}
-
 func GetTodoRoutes(route *gin.Engine, s service.TodoService) {
-	ss := securityService.NewTokenService()
-	sc := securityController.NewSecurityController(ss)
+	context := context.Background()
 
-	route.POST("/login", sc.LoginController)
+	keycloak := keycloak.NewKeycloakConfig(
+		os.Getenv("KEYCLOAK_HOST"),
+		os.Getenv("KEYCLOAK_PORT"),
+		os.Getenv("CLIENT_ID"),
+		os.Getenv("CLIENT_SECRET"),
+		os.Getenv("CLIENT_REALM"),
+		os.Getenv("ADMIN_USERNAME"),
+		os.Getenv("ADMIN_PASSWORD"),
+		os.Getenv("ADMIN_REALM"),
+	)
+
+	us := userService.NewUserService(context, keycloak)
+	uc := userController.NewUserController(us)
+
+	route.POST("/login", uc.LoginController)
+	route.POST("/register", uc.CreateNewUserController)
 
 	todoController := controller.NewTodoController(s)
 
-	todo := route.Group("/todo", auth(ss))
+	todo := route.Group("/todo", uc.AuthMiddleware())
 	{
 		todo.GET("/", todoController.ListTodoHandler)
 		todo.POST("/", todoController.CreateTodoHandler)
