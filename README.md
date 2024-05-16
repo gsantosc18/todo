@@ -23,6 +23,7 @@ Este projeto é uma aplicação simples de lista de tarefas (ToDo List), impleme
 - **[JWT-go](https://github.com/golang-jwt/jwt)**: Biblioteca para implementar autenticação JWT.
 - **[Swag](https://github.com/swaggo/swag)**: Ferramenta para gerar a documentação da API com Swagger.
 - **[Kafka](https://github.com/confluentinc/confluent-kafka-go)**: Ferramenta de mensageria.
+- **[Keycloak](https://github.com/Nerzal/gocloak)**: Ferramenta de gerenciamento de identidade de código aberto.
 
 ## Pré-requisitos
 

@@ -1,0 +1,80 @@
+services:
+  db:
+    container_name: todo-db
+    image: docker.io/library/postgres:latest
+    restart: on-failure
+    env_file:
+      - ./db.env
+    volumes:
+      - postgres-data:/data/postgres
+      - ../db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - 5432:5432
+    networks:
+      - dev-infra
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.3
+    container_name: todo-keycloak
+    restart: on-failure
+    env_file:
+      - ./keycloak/keycloak.env
+    volumes:
+      - ./keycloak/todo-realm.json:/opt/keycloak/data/import/realm-export.json
+      - keycloak-data:/opt/keycloak
+    ports:
+      - 8181:8080
+    command: ["start-dev", "--import-realm"]
+    networks:
+      - dev-infra
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+    networks:
+      - dev-infra
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    env_file:
+      - ./kafka.env
+    depends_on:
+      - zookeeper
+    networks:
+      - dev-infra
+  
+  app:
+    build: 
+      context: ../
+      dockerfile: Dockerfile
+    container_name: todo-app
+    restart: on-failure
+    env_file:
+      - ./app.env
+    ports:
+      - 8080:8080
+    networks:
+      - dev-infra
+    depends_on:
+      - db
+      - kafka
+      - keycloak
+
+volumes:
+  mariadb-data:
+  postgres-data:
+  keycloak-data:
+
+networks:
+  dev-infra:
+    name: dev-infra
+    external: true
+    driver: bridge
