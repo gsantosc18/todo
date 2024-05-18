@@ -48,6 +48,27 @@ Antes de iniciar, você precisará ter instalado em sua máquina:
     DB_NAME=aula
     ```
 
+## Configurar o ambiente com docker
+
+### Pré requisitos
+
+Antes de iniciar, você precisará ter instalado em sua máquina:
+- Docker
+- Docker Compose
+
+### Executando a Aplicação
+
+Para iniciar o serviço utilizando Docker Compose, execute o seguinte comando na pasta `docker` do projeto:
+
+```
+docker-compose up -d --build
+```
+
+Isso fará com que os containers da aplicação sejam construídos e iniciados. Os servidores estarão disponíveis em:
+
+- Swagger: http://localhost:8080/swagger/index.html.
+- Keycloak: http://localhost:8181
+
 ## Instalação
 
 Clone o projeto (ou baixe o zip):
