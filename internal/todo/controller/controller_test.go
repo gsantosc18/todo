@@ -65,13 +65,13 @@ func TestListTodoSuccess(t *testing.T) {
 
 	service := mock.NewMockTodoService(ctrl)
 
-	service.EXPECT().ListTodo().Return([]domain.Todo{todo})
+	service.EXPECT().ListTodo(gomock.Any()).Return(domain.NewPaginatedTodo([]domain.Todo{todo}, 0))
 
 	controller := NewTodoController(service)
 	controller.ListTodoHandler(ctx)
 
-	listTodo := responseMapperTodo[[]domain.Todo](w.Body)
-	responseTodo := listTodo[0]
+	listTodo := responseMapperTodo[domain.PaginatedTodo](w.Body)
+	responseTodo := listTodo.Data[0]
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, todo.ID, responseTodo.ID, "ID expected %s, but got %s", todo.ID, responseTodo.ID)

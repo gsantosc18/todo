@@ -9,20 +9,21 @@ import (
 )
 
 type TodoRepositoryImpl struct {
-	db *gorm.DB
+	db           *gorm.DB
+	limitPerPage int
 }
 
-func NewTodoRepository(db *gorm.DB) *TodoRepositoryImpl {
+func NewTodoRepository(db *gorm.DB, limitPerPage int) *TodoRepositoryImpl {
 	return &TodoRepositoryImpl{
 		db: db,
 	}
 }
 
-func (tri *TodoRepositoryImpl) List() []domain.Todo {
+func (tri *TodoRepositoryImpl) List(page int) *domain.PaginatedTodo {
 	var todo []domain.Todo
-	tri.db.Find(&todo)
+	tri.db.Find(&todo).Offset(page).Limit(tri.limitPerPage)
 
-	return todo
+	return domain.NewPaginatedTodo(todo, 0)
 }
 
 func (tri *TodoRepositoryImpl) Insert(todo *domain.Todo) (domain.Todo, error) {

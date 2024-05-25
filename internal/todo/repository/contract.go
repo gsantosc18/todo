@@ -5,7 +5,7 @@ import (
 )
 
 type TodoRepository interface {
-	List() []domain.Todo
+	List(page int) *domain.PaginatedTodo
 	Insert(todo *domain.Todo) (domain.Todo, error)
 	Update(id string, todo *domain.Todo) (domain.Todo, error)
 	Delete(id string) error

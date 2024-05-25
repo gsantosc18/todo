@@ -13,8 +13,8 @@ func NewTodoService(todoRepository repository.TodoRepository) TodoService {
 	return &TodoServiceImpl{todoRepository: todoRepository}
 }
 
-func (ts *TodoServiceImpl) ListTodo() []domain.Todo {
-	return ts.todoRepository.List()
+func (ts *TodoServiceImpl) ListTodo(page int) *domain.PaginatedTodo {
+	return ts.todoRepository.List(page)
 }
 
 func (ts *TodoServiceImpl) InserTodo(todo *domain.Todo) (domain.Todo, error) {
