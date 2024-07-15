@@ -12,13 +12,15 @@ func (Todo) TableName() string {
 }
 
 type PaginatedTodo struct {
-	Data []Todo `json:"data"`
-	Page int    `json:"page"`
+	Data  []Todo `json:"data"`
+	Page  int    `json:"page"`
+	Count int64  `json:"count"`
 }
 
-func NewPaginatedTodo(data []Todo, page int) *PaginatedTodo {
+func NewPaginatedTodo(data []Todo, page int, count int64) *PaginatedTodo {
 	return &PaginatedTodo{
-		Data: data,
-		Page: page,
+		Data:  data,
+		Page:  page,
+		Count: count,
 	}
 }

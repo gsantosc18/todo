@@ -15,15 +15,27 @@ type TodoRepositoryImpl struct {
 
 func NewTodoRepository(db *gorm.DB, limitPerPage int) *TodoRepositoryImpl {
 	return &TodoRepositoryImpl{
-		db: db,
+		db:           db,
+		limitPerPage: limitPerPage,
 	}
 }
 
 func (tri *TodoRepositoryImpl) List(page int) *domain.PaginatedTodo {
-	var todo []domain.Todo
-	tri.db.Find(&todo).Offset(page).Limit(tri.limitPerPage)
+	var (
+		todo  []domain.Todo
+		count int64
+	)
+	var searchPage int
 
-	return domain.NewPaginatedTodo(todo, 0)
+	if page <= 0 {
+		searchPage = 0
+	} else {
+		searchPage = page - 1
+	}
+
+	tri.db.Limit(tri.limitPerPage).Offset(tri.limitPerPage * searchPage).Find(&todo)
+	tri.db.Model(&domain.Todo{}).Count(&count)
+	return domain.NewPaginatedTodo(todo, page, count)
 }
 
 func (tri *TodoRepositoryImpl) Insert(todo *domain.Todo) (domain.Todo, error) {

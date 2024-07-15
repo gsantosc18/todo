@@ -55,7 +55,7 @@ func TestListTodo(t *testing.T) {
 
 	repository := mock.NewMockTodoRepository(ctrl)
 
-	repository.EXPECT().List(gomock.Any()).Return(domain.NewPaginatedTodo([]domain.Todo{todo}, 0))
+	repository.EXPECT().List(gomock.Any()).Return(domain.NewPaginatedTodo([]domain.Todo{todo}, 0, 0))
 
 	service := NewTodoService(repository)
 

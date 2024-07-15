@@ -47,7 +47,8 @@ func main() {
 
 	db := database.GetConnect()
 
-	limitPagination, _ := strconv.Atoi(("PAGINATION"))
+	limitPagination, _ := strconv.Atoi(os.Getenv("PAGINATION"))
+	slog.Info("Size pagination", "pagination", limitPagination)
 	todoRepository := repository.NewTodoRepository(db, limitPagination)
 	todoService := service.NewTodoService(todoRepository)
 

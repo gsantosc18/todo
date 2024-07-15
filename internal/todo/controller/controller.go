@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gsantosc18/todo/internal/todo/domain"
@@ -37,7 +39,8 @@ func NewTodoController(todoService service.TodoService) *TodoController {
 //	@Failure		401		{string}	string	"Token inválido"
 //	@Router			/todo [get]
 func (tc *TodoController) ListTodoHandler(context *gin.Context) {
-	page := context.GetInt("page")
+	page, _ := strconv.Atoi(context.DefaultQuery("page", "0"))
+	slog.Info("Requested page", "page", page)
 	todos := tc.todoService.ListTodo(page)
 	context.JSON(http.StatusOK, todos)
 }
