@@ -10,3 +10,17 @@ type Todo struct {
 func (Todo) TableName() string {
 	return "todo"
 }
+
+type PaginatedTodo struct {
+	Data  []Todo `json:"data"`
+	Page  int    `json:"page"`
+	Count int64  `json:"count"`
+}
+
+func NewPaginatedTodo(data []Todo, page int, count int64) *PaginatedTodo {
+	return &PaginatedTodo{
+		Data:  data,
+		Page:  page,
+		Count: count,
+	}
+}

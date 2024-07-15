@@ -55,15 +55,15 @@ func TestListTodo(t *testing.T) {
 
 	repository := mock.NewMockTodoRepository(ctrl)
 
-	repository.EXPECT().List().Return([]domain.Todo{todo})
+	repository.EXPECT().List(gomock.Any()).Return(domain.NewPaginatedTodo([]domain.Todo{todo}, 0, 0))
 
 	service := NewTodoService(repository)
 
-	todos := service.ListTodo()
-	firstTodo := todos[0]
+	todos := service.ListTodo(0)
+	firstTodo := todos.Data[0]
 
-	if len(todos) == 0 {
-		t.Error("Size of todos is unexpected", "size", len(todos))
+	if len(todos.Data) == 0 {
+		t.Error("Size of todos is unexpected", "size", len(todos.Data))
 		return
 	}
 

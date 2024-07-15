@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gsantosc18/todo/internal/todo/config/database"
@@ -46,7 +47,9 @@ func main() {
 
 	db := database.GetConnect()
 
-	todoRepository := repository.NewTodoRepository(db)
+	limitPagination, _ := strconv.Atoi(os.Getenv("PAGINATION"))
+	slog.Info("Size pagination", "pagination", limitPagination)
+	todoRepository := repository.NewTodoRepository(db, limitPagination)
 	todoService := service.NewTodoService(todoRepository)
 
 	todoConsumer := message.NewTodoConsumer(todoService)

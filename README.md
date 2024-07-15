@@ -114,3 +114,18 @@ curl -X POST http://localhost:8080/todo
 ```bash
 curl -X GET http://localhost:8080/todo
 ```
+
+## Testes
+
+### Criar mock
+
+Exemplo:
+```bash
+mockgen -source=internal/todo/service/contrat.go -destination=test/mock/servicemock.go -package=mock
+```
+
+### Execução 
+Exemplo:
+```bash
+go test -cover ./...
+```

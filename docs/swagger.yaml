@@ -27,6 +27,15 @@ definitions:
         example: jhondoel1995
         type: string
     type: object
+  domain.PaginatedTodo:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.Todo'
+        type: array
+      page:
+        type: integer
+    type: object
   domain.Todo:
     properties:
       description:
@@ -35,7 +44,7 @@ definitions:
       done:
         type: boolean
       id:
-        example: "1"
+        example: 4b61e0a8-1fe0-4c7f-97bf-f3e9c4e86c3a
         type: string
       name:
         example: Example name
@@ -143,15 +152,18 @@ paths:
       consumes:
       - application/json
       description: Listagem de todos cadatrados
+      parameters:
+      - description: Número da página
+        in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/domain.Todo'
-            type: array
+            $ref: '#/definitions/domain.PaginatedTodo'
         "401":
           description: Token inválido
           schema:

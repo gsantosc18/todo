@@ -69,17 +69,17 @@ func (mr *MockTodoServiceMockRecorder) InserTodo(todo any) *gomock.Call {
 }
 
 // ListTodo mocks base method.
-func (m *MockTodoService) ListTodo() []domain.Todo {
+func (m *MockTodoService) ListTodo(page int) *domain.PaginatedTodo {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListTodo")
-	ret0, _ := ret[0].([]domain.Todo)
+	ret := m.ctrl.Call(m, "ListTodo", page)
+	ret0, _ := ret[0].(*domain.PaginatedTodo)
 	return ret0
 }
 
 // ListTodo indicates an expected call of ListTodo.
-func (mr *MockTodoServiceMockRecorder) ListTodo() *gomock.Call {
+func (mr *MockTodoServiceMockRecorder) ListTodo(page any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTodo", reflect.TypeOf((*MockTodoService)(nil).ListTodo))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTodo", reflect.TypeOf((*MockTodoService)(nil).ListTodo), page)
 }
 
 // UpdateTodo mocks base method.

@@ -117,14 +117,19 @@ const docTemplate = `{
                     "todo"
                 ],
                 "summary": "Lista os todos",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Número da página",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Todo"
-                            }
+                            "$ref": "#/definitions/domain.PaginatedTodo"
                         }
                     },
                     "401": {
@@ -327,6 +332,20 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.PaginatedTodo": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Todo"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.Todo": {
             "type": "object",
             "properties": {
@@ -339,7 +358,7 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string",
-                    "example": "1"
+                    "example": "4b61e0a8-1fe0-4c7f-97bf-f3e9c4e86c3a"
                 },
                 "name": {
                     "type": "string",
