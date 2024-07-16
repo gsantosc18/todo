@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/gsantosc18/todo/internal/config/keycloak"
@@ -27,7 +28,7 @@ func (usi *UserServiceImpl) getClientKeycloak() *gocloak.GoCloak {
 	return gocloak.NewClient(keycloak_host)
 }
 
-func (usi *UserServiceImpl) CreateNewUser(createUser domain.CreateUser) (*domain.User, error) {
+func (usi *UserServiceImpl) CreateNewUser(createUser domain.CreateUser) (*domain.User, domain.ResponseError) {
 	keycloakUser := gocloak.User{
 		FirstName: &createUser.FirstName,
 		LastName:  &createUser.LastName,
@@ -40,23 +41,35 @@ func (usi *UserServiceImpl) CreateNewUser(createUser domain.CreateUser) (*domain
 	token, tokenErr := client.LoginAdmin(usi.ctx, usi.keycloakConfig.Admin.Username, usi.keycloakConfig.Admin.Password, usi.keycloakConfig.Admin.Realm)
 
 	if tokenErr != nil {
-		return nil, tokenErr
+		return nil, domain.ResponseError{
+			Error:      fmt.Errorf("keycloak: [%s]", removeStatus(tokenErr.Error())),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	if token == nil {
-		return nil, errors.New("invalid token")
+		return nil, domain.ResponseError{
+			Error:      errors.New("invalid client secret"),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	userId, createUserErr := client.CreateUser(usi.ctx, token.AccessToken, usi.keycloakConfig.Client.Realm, keycloakUser)
 
 	if createUserErr != nil {
-		return nil, createUserErr
+		return nil, domain.ResponseError{
+			Error:      fmt.Errorf("keycloak: [%s]", removeStatus(createUserErr.Error())),
+			StatusCode: http.StatusBadRequest,
+		}
 	}
 
 	passwordErr := client.SetPassword(usi.ctx, token.AccessToken, userId, usi.keycloakConfig.Client.Realm, createUser.Password, false)
 
 	if passwordErr != nil {
-		return nil, passwordErr
+		return nil, domain.ResponseError{
+			Error:      passwordErr,
+			StatusCode: http.StatusBadRequest,
+		}
 	}
 
 	user := &domain.User{
@@ -68,7 +81,7 @@ func (usi *UserServiceImpl) CreateNewUser(createUser domain.CreateUser) (*domain
 		Enabled:   true,
 	}
 
-	return user, nil
+	return user, domain.ResponseError{}
 }
 
 func (usi *UserServiceImpl) Login(userLogin domain.UserLogin) (*domain.Token, error) {
@@ -83,7 +96,7 @@ func (usi *UserServiceImpl) Login(userLogin domain.UserLogin) (*domain.Token, er
 	)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.New(removeStatus(err.Error()))
 	}
 
 	return &domain.Token{
@@ -98,8 +111,12 @@ func (usi *UserServiceImpl) DecodeToken(accessToken string) (bool, error) {
 	jwt, _, err := client.DecodeAccessToken(usi.ctx, accessToken, usi.keycloakConfig.Client.Realm)
 
 	if err != nil {
-		return false, err
+		return false, errors.New(removeStatus(err.Error()))
 	}
 
 	return jwt.Valid, nil
+}
+
+func removeStatus(errorMessage string) string {
+	return errorMessage[4:]
 }
