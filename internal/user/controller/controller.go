@@ -82,8 +82,8 @@ func (uc *UserController) CreateNewUserController(context *gin.Context) {
 
 	user, err := uc.userService.CreateNewUser(createUser)
 
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, ResponseError{err.Error()})
+	if err.Error != nil {
+		context.JSON(err.StatusCode, ResponseError{Error: err.Error.Error()})
 		return
 	}
 

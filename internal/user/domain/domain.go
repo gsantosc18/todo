@@ -26,3 +26,8 @@ type CreateUser struct {
 	UserName  string `json:"username" example:"jhondoel1995"`
 	Password  string `json:"password" example:"s3cr3t3"`
 }
+
+type ResponseError struct {
+	Error      error
+	StatusCode int
+}
