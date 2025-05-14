@@ -335,6 +335,9 @@ const docTemplate = `{
         "domain.PaginatedTodo": {
             "type": "object",
             "properties": {
+                "count": {
+                    "type": "integer"
+                },
                 "data": {
                     "type": "array",
                     "items": {

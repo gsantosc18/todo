@@ -29,6 +29,8 @@ definitions:
     type: object
   domain.PaginatedTodo:
     properties:
+      count:
+        type: integer
       data:
         items:
           $ref: '#/definitions/domain.Todo'
